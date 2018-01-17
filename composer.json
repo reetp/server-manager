@@ -1,0 +1,23 @@
+{
+  "name": "Koozali Server-Manager",
+  "description": "Koozali Server-Manager - admin control panel and dashboard that's based on Bootstrap 3",
+  "homepage": "http://koozali.org/",
+  "keywords": [
+    "linux",
+    "server",
+    "centos",
+    "koozali",
+    "sme",
+    "contribs"
+  ],
+  "authors": [
+    {
+      "name": "Koozali Foundation",
+      "email": "support@koozali.org"
+    }
+  ],
+  "license": "MIT",
+  "support": {
+    "issues": "http://http://forums.contribs.org/"
+  }
+}
