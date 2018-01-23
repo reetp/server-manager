@@ -77,7 +77,7 @@ get '/update' => sub {
 # This will output the browser data - the form user /agent to get here
 # no idea yet how to get the posted form data
 
-post '/agent' => sub {
+post '/' => sub {
 
     my $c    = shift;
     my $host = $c->req->url->to_abs->host;
@@ -126,7 +126,7 @@ Hello Template Text
 
 <br />
 
-<form name="networks" action="./readtest1.cgi/agent" method="POST">
+<form name="networks" action="" method="POST">
 
 <div>
 <%= select_field 'networks' => [ @{ stash('stuff') }], id=> 'dropdown' %>
