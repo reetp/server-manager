@@ -12,7 +12,7 @@ use esmith::ConfigDB;
 # plugin 'TagHelpers';
 
 # Some sample code to test opening esmith DBs
-my $configDB = esmith::ConfigDB->open_ro or die("can't open Config DB");
+my $configDB   = esmith::ConfigDB->open_ro          or die("can't open Config DB");
 my $networksDB = esmith::ConfigDB->open('networks') or die("Error - cant connect to networks database");
 
 my $key = 'sshd';
@@ -25,19 +25,18 @@ $data .= "A new line<br>";
 $data .= "Some Text<br/>";
 $data .= "some more Text<br/>";
 
-
 # Open a 'controller'
 
 get '/' => sub {
 
     my ($mojo) = @_;
 
-# Various old test $vars
+    # Various old test $vars
     # my $mojo = shift;
     # my $test = $mojo->param('Key Value:');
     # my $text        = "Key $key is";
 
-# Some test code to grab a few bits
+    # Some test code to grab a few bits
 
     my @connections = $networksDB->keys;
 
@@ -83,24 +82,25 @@ get '/update' => sub {
 # This will output the browser data - the form user /result to get here
 # no idea yet how to get the posted form data
 
-post '/result' => sub {
+post '/' => sub {
 
-    my $mojo    = shift;
+    my $mojo = shift;
+
     # my ($mojo) = @_;
 
     my $host = $mojo->req->url->to_abs->host;
     my $ua   = $mojo->req->headers->user_agent;
 
     my $list = $mojo->param('list');
-    $mojo->stash( data => $list);
+    $mojo->stash( listR => $list );
 
     my $pass = $mojo->param('pass');
-    $mojo->stash( pass => $pass);
+    $mojo->stash( passR => $pass );
 
-    my $country= $mojo->param('country');
-    $mojo->stash( country => $country);
+    my $country = $mojo->param('country');
+    $mojo->stash( countryR => $country );
 
-#    $c->render( text => "Request by $ua reached $host. <br />Form data is $data <br /> Country is $radio <br />Pass is $pass");
+    #    $c->render( text => "Request by $ua reached $host. <br />Form data is $data <br /> Country is $radio <br />Pass is $pass");
     $mojo->stash( contentVar => '_result' );
 
     # here is where we are stuck - it shoudl render main with _result embedded. But it doesn't
@@ -111,20 +111,15 @@ post '/result' => sub {
 
 app->start;
 
-
 __DATA__
 
 @@ _content.html.ep
 
 <!-- Main content -->
 
-<form name="list" action="./template.cgi/result" method="POST">
+<form name="list" action="" method="POST">
 
-<div>
-<%= select_field 'list' => [ @{ stash('stuff') }], id=> 'dropdown' %>
-</div>
 
-<br />
 
 <div>
 % param country => 'germany' unless param 'country';
@@ -136,6 +131,11 @@ __DATA__
 
 <br />
 
+<div>
+<%= select_field 'list' => [ @{ stash('stuff') }], id=> 'dropdown' %>
+</div>
+
+<br />
 <div>
 Password
 <%= password_field 'pass', id => 'foo' %>
@@ -170,18 +170,18 @@ Password
 @@ _result.html.ep
 
 <div>
-<!--      <section class="content"> -->
+      <section class="content">
          <p>Returned Values</p>
          First line is
-         <%= $list %>
+         <%= $listR %>
          <br />
          Second Line is 
-         <%= $pass %>
+         <%= $passR %>
          <br />
          Third line is 
-         <%= $country %>
+         <%= $countryR %>
          <br />
-<!--      </section><!-- /.content --> -->
+      </section><!-- /.content -->
 </div>
 
 @@ main.html.ep
