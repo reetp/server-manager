@@ -1,4 +1,5 @@
-#!/usr/bin/perl
+#!/usr/bin/perl 
+# no -d allowed when running suid from the cgi-bin dir :-(
 #-wT
 # vim: ft=xml:
 
@@ -25,11 +26,10 @@ get '/' => sub {
     my ($mojo) = @_;
 
     # Setup our 3 buttons
-    $mojo->stash( RBL => 'RBL List', Black => 'Black List', White => 'White List' );
+    # $mojo->stash( RBL => 'RBL List', Black => 'Black List', White => 'White List' );
 
     # Or use a dropdown list
     my @wblList = ( 'RBL List', 'Black List', 'White List' );
-
     $mojo->stash( list => \@wblList );
 
     # This is the template fragment to be embedded in main
@@ -46,7 +46,6 @@ get '/' => sub {
 #get 'test2' => sub {
 #};
 
-
 # called via post
 post '/' => sub {
 
@@ -57,16 +56,84 @@ post '/' => sub {
 
     # This is the name used in the select_files e.g. 'list'
     my $list = $mojo->param('list');
-    $mojo->stash( listR => $list );
 
-    $mojo->stash( passR => 'Test Test');
-    # OK, lets do one bit and see what occurs
+    SWITCH: {
+        if ( $list =~ /^RBL List/ ) {
+            $mojo->stash( contentVar => '_rbl' );
+            $mojo->stash( listR      => $list );
+        }
+        if ( $list =~ /^Black List/ ) {
+            $mojo->stash( contentVar => '_black' );
+            $mojo->stash( listR      => $list );
+        }
+        if ( $list =~ /^White List/ ) {
+            $mojo->stash( contentVar => '_white' );
+            $mojo->stash( listR      => $list );
+        }
+
+        # Fall through back to choice list
+        # Not sure how do do an 'else' though !
+#        my @wblList = ( 'RBL List', 'Black List', 'White List' );
+#        $mojo->stash( list       => \@wblList );
+#        $mojo->stash( contentVar => '_choice' );
+    }
+
+    # Hmm some of this comes back as a carriage return separated array
+    # For now removed the \n and join in the wbl.pm file
+    # eg joe@domain.com\nfred@domain.com
+    #
+
+
+    # For RBL List
     
-    my @dnsbl = get_dnsbl();
-    $mojo->stash( dnsbl => \@dnsbl );
+    # dnsbl - returns 'enabled/disabled
+    my $dnsbl = get_dnsbl();
+    $mojo->stash( dnsbl => $dnsbl );
     
+    # rhsbl - returns 'enabled/disabled
+    my $rhsbl = get_rhsbl();
+    $mojo->stash( rhsbl => $rhsbl );
+    
+    # uribl - returns 'enabled/disabled
+    my $uribl = get_uribl();
+    $mojo->stash( uribl => $uribl );
+    
+    # For SBLList List
+    my @sbllist = get_sbllist();
+    $mojo->stash( sbllist => \@sbllist );
+
+    # For RBLList List
+    my @rbllist = get_rbllist();
+    $mojo->stash( rbllist => \@rbllist );
+    
+    # For URLList List
+    my @ubllist = get_ubllist();
+    $mojo->stash( ubllist => \@ubllist );
+    
+
+    # For Black List
+    my @badhelo = get_badhelo();
+    $mojo->stash( badhelo => \@badhelo );
+    
+    my @badmailfrom = get_badmailfrom();
+    $mojo->stash( badmailfrom => \@badmailfrom );
+
+
+    # For WBL List
+    my @whitelistsenders = get_whitelistsenders();
+    $mojo->stash( whitesenders => \@whitelistsenders );
+
+    my @whitelisthelo = get_whitelisthelo();
+    $mojo->stash( whitehelo => \@whitelisthelo );
+
+    my @whitelisthosts = get_whitelisthosts();
+    $mojo->stash( whitehosts => \@whitelisthosts );
+
+    my @whitelistfrom = get_whitelistfrom();
+    $mojo->stash( whitefrom => \@whitelistfrom );
+
     # Decide what to do depending on the button
-    $mojo->stash( contentVar => '_result' );
+
     $mojo->render( template => 'main' );
 };
 
@@ -76,12 +143,14 @@ __DATA__
 
 @@ _choice.html.ep
 
+<div>
+      <section class="content">
+      
 %#Some Form Buttons
 %#= button_to Test => 'http://home.reetspetit.net/'
 %#= button_to Remove => './wbl.cgi'
 
 <form name="choice" action="" method="POST">
-
 
 Test dropbown list
 <div>
@@ -91,40 +160,245 @@ Test dropbown list
 
 <input type="submit" value="Submit">
 </form>
+      </section><!-- /.content -->
+</div>
 
-
-@@ _result.html.ep
+@@ _black.html.ep
 
 <div>
       <section class="content">
          <p>Returned Values</p>
-         First line is from dummy list: 
+         First line is from returned from list: 
          <%= $listR %>
          <br />
-         Second Line is the password field: 
-         <%= $passR %>
-         <br />
+      </section><!-- /.content -->
+</div>
+<br />
 
+<div>
+      <section class="content">
+      
+      Form starts here
+      <br />
+
+<table>
+<tbody>
+<tr>
+
+<form name="list" action="" method="POST">
+
+
+<b>Blacklist  helo</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('badhelo') }) {
+%= $_
+% }
+%end
+<br />
+
+<b>Blacklist  helo</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('badmailfrom') }) {
+%= $_
+% }
+%end
+<br />
+<input type="submit" value="Submit">
+</form>
+
+</tr>
+</tbody>
+</table>
+
+<br />
+<br />
 
       </section><!-- /.content -->
 </div>
 
-Some results here
+
+@@ _rbl.html.ep
+
+<div>
+      <section class="content">
+         <p>Returned Values</p>
+         First line is from returned from list: 
+         <%= $listR %>
+         <br />
+      </section><!-- /.content -->
+</div>
 <br />
-Should be the form for the selected page RBL Black or White
+<div>
+      <section class="content">
+      Form starts here
+      <br />
+      <br />
+      
+<b>DNSBL</b>
+<br />
+% param dnsbl => 'disabled' unless $dnsbl eq 'enabled';
+<%= radio_button 'dnsbl' => 'enabled' %> Enabled
+<%= radio_button 'dnsbl' => 'disabled'  %> Disabled
+
+<br />
+<br />
+
+<b>RHSBL</b>
+<br />
+<%= radio_button 'rhsbl' => 'enabled' %> Enabled
+<%= radio_button 'rhsbl' => 'disabled'  %> Disabled
+
+<br />
+<br />
+
+<b>URI BL</b>
+<br />
+<%= radio_button 'uribl' => 'enabled' %> Enabled
+<%= radio_button 'uribl' => 'disabled'  %> Disabled
+
+<br />
+<br />
+
+<form name="list" action="" method="POST">
 
 <table>
-% for (@$dnsbl) {
-%   my @columns = split;
-%=  tag tr => begin
-%   for (@columns) {
-%=    tag td => $_
-%   }
-%   end
+<tbody>
+<tr>
+<b>RBL List</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('rbllist') }) {
+%= $_
 % }
+%end
+<br />
+<tr />
+
+<tr>
+<b>SBL List</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('sbllist') }) {
+%= $_
+% }
+%end
+<br />
+
+<b>URL List</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('ubllist') }) {
+%= $_
+% }
+%end
+<br />
+
+</tr>
+</tbody>
 </table>
 
+<input type="submit" value="Submit">
+</form>
 
+<br />
+<br />
+
+      </section><!-- /.content -->
+</div>
+
+
+@@ _white.html.ep
+
+<div>
+      <section class="content">
+         <p>Returned Values</p>
+         First line is from returned from list: 
+         <%= $listR %>
+         <br />
+      </section><!-- /.content -->
+</div>
+<br />
+<div>
+      <section class="content">
+      
+      Form starts here
+<br />
+
+
+<form name="list" action="" method="POST">
+<table>
+<tbody>
+<tr>
+
+<b>Whitelist  hosts</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('whitehosts') }) {
+%= $_
+% }
+%end
+<br />
+<br />
+
+<b>Whitelist  helo</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('whitehelo') }) {
+%= $_
+% }
+%end
+<br />
+<br />
+
+<b>Whitelist senders</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('whitesenders') }) {
+%= $_
+% }
+%end
+<br />
+<br />
+
+<b>Spamassasin from</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('whitefrom') }) {
+%= $_
+% }
+%end
+<br />
+<br />
+
+<input type="submit" value="Submit">
+</form>
+
+</tr>
+</tbody>
+</table>
+
+<br />
+<br />
+Sample text areas
+<br />
+
+%= text_area 'story'
+<br />
+%= text_area 'story', cols => 40
+<br />
+%= text_area story => 'Default\nDove', cols => 40
+<br />
+%= text_area story => (cols => 40) => begin
+  Default
+  Swan
+% end
+<br />
+<br />
+
+      </section><!-- /.content -->
+</div>
 
 
 @@ main.html.ep
@@ -185,7 +459,7 @@ Should be the form for the selected page RBL Black or White
         <!-- sidebar menu: : style can be found in sidebar.less -->
 
         <ul class="sidebar-menu">
-          <li class="active"><a href="template.cgi"><span>Home</span></a></li>
+          <li class="active"><a href="wbl.cgi"><span>Home</span></a></li>
 
           <li class="treeview">
             <a href="#"><span>Collaboration</span></a>
@@ -322,3 +596,4 @@ Should be the form for the selected page RBL Black or White
 
 </body>
 </html>
+

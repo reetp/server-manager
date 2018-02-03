@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w 
 
 # package esmith::FormMagick::Panel::wblNew;
-use esmith::wblNew;
+use esmith::FormMagick::Panel::wblNew;
 
 use strict;
 use warnings;
@@ -33,6 +33,11 @@ sub get_rhsbl
     return ($db->get_prop('qpsmtpd', 'RHSBL') || 'disabled');
 }
 
+sub get_uribl
+{
+    return ($db->get_prop('qpsmtpd', 'URIBL') || 'disabled');
+}
+
 sub get_sbllist
 {
 my $sbllistform = $db->get_prop('qpsmtpd', 'SBLList') || '';
@@ -46,6 +51,14 @@ my $rbllistform = $db->get_prop('qpsmtpd', 'RBLList') || '';
 $rbllistform =~ s/,/\n/g;
 return $rbllistform;
 }
+
+sub get_ubllist
+{
+my $rbllistform = $db->get_prop('qpsmtpd', 'UBLList') || '';
+$rbllistform =~ s/,/\n/g;
+return $rbllistform;
+}
+
 
 sub get_badhelo
 {
@@ -64,7 +77,8 @@ sub get_badhelo
 
     return "" unless (scalar @badhelo);
 
-    return join "\n", sort(@badhelo);
+#    return join "\n", sort(@badhelo);
+    return sort(@badhelo);
 }
 
 sub get_badmailfrom
@@ -84,7 +98,8 @@ sub get_badmailfrom
 
     return "" unless (scalar @badmailfrom);
 
-    return join "\n", sort(@badmailfrom);
+#    return join "\n", sort(@badmailfrom);
+    return sort(@badmailfrom);
 }
 
 sub get_whitelisthosts
@@ -104,7 +119,9 @@ sub get_whitelisthosts
 
     return "" unless (scalar @whitelisthosts);
 
-    return join "\n", sort(@whitelisthosts);
+#    return join "\n", sort(@whitelisthosts);
+    return sort(@whitelisthosts);
+    
 }
 
 sub get_whitelisthelo
@@ -124,7 +141,8 @@ sub get_whitelisthelo
 
     return "" unless (scalar @whitelisthelo);
 
-    return join "\n", sort(@whitelisthelo);
+#    return join "\n", sort(@whitelisthelo);
+    return sort(@whitelisthelo);
 }
 
 sub get_whitelistsenders
@@ -144,7 +162,8 @@ sub get_whitelistsenders
 
     return "" unless (scalar @whitelistsenders);
 
-    return join "\n", sort(@whitelistsenders);
+    #return join "\n", sort(@whitelistsenders);
+    return sort(@whitelistsenders);
 }
 
 sub get_whitelistfrom
@@ -164,7 +183,8 @@ sub get_whitelistfrom
 
     return "" unless (scalar @whitelistfrom);
 
-    return join "\n", sort(@whitelistfrom);
+#    return join "\n", sort(@whitelistfrom);
+    return sort(@whitelistfrom);
 }
 
 sub create_modify_black
