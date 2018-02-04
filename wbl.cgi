@@ -149,6 +149,36 @@ post '/' => sub {
 
 app->start;
 
+# Templates below - could be separated files
+# DATA starts the template section
+# _choice is the intial choice panel
+# _black is the blacklist panel
+# _white is the whitelist panel
+# _rbl is the RBL settings panel
+# _main includes one of the above four template snippets depending on what is called.
+# using the line <%= include $contentVar %>
+# So all you need to do is write some template code for your particular panel
+# Mojo has a set of defined routines to generate forms, buttons, text boxes etc
+# http://mojolicious.org/perldoc/Mojolicious/Plugin/TagHelpers
+# For syntax see here
+# http://mojolicious.org/perldoc/Mojolicious/Guides/Rendering#Embedded-Perl
+# bootstrap and the AdminLTE template format everything
+# Needs a html/CSS guru to define a standard layout, and some CSS IDs for different page elements
+# Adding a new panel just needs a new link added in main.html.ep - that could be done with $vars
+# Maybe the easiest way is to to have a 'panels DB' with installed panels.
+# Then links is just a case of a bit of code to see which panels are installed and add the relevant links in main.html.ep
+# db panels set email name E-mail WBL status enabled - so type is 'email' to add it in the right section and panel name is 'E-Mail WBL'
+# It would be easy to disable panels as well..... just set db panels setprop wbl status disabled
+# Links are currently hardwired:
+# <li><a href="/server-manager/cgi-bin/useraccounts">Users</a></li>
+# blah more lines
+# That would be easy to template
+# for each (panel DB enabled)
+# <line of code>
+
+# probably loads more that could be done......
+
+
 __DATA__
 
 @@ _choice.html.ep
