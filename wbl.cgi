@@ -57,6 +57,13 @@ post '/' => sub {
     # This is the name used in the select_files e.g. 'list'
     my $list = $mojo->param('list');
 
+    # We should put the vars below into these SWITCH statements
+    # We can then check the call in the $list var.
+    # If it is a straightforward POST call we return a template
+    # If it is like wbl.cgi?get_dnsbl or wbl.cgi?get_rblSettings or similar
+    # we could return some JSON instead
+    # Just needs some logic to figure the call style and output relevant data
+    
     SWITCH: {
         if ( $list =~ /^RBL List/ ) {
             $mojo->stash( contentVar => '_rbl' );
@@ -82,10 +89,12 @@ post '/' => sub {
     # For now removed the \n and join in the wbl.pm file
     # eg joe@domain.com\nfred@domain.com
     #
-
+    
+    # The following should probably go in the above switch routines so they only get called as required
+    # You can then do some logic to either call a template to output the data,
+    # or alternatively answer a query with some JSON instead
 
     # For RBL List
-    
     # dnsbl - returns 'enabled/disabled
     my $dnsbl = get_dnsbl();
     $mojo->stash( dnsbl => $dnsbl );
@@ -132,6 +141,7 @@ post '/' => sub {
     my @whitelistfrom = get_whitelistfrom();
     $mojo->stash( whitefrom => \@whitelistfrom );
 
+    # Ignore this = was thinking choice buttons instead of a dropdown.
     # Decide what to do depending on the button
 
     $mojo->render( template => 'main' );
