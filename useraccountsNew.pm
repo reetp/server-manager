@@ -23,18 +23,23 @@ package    esmith::FormMagick::Panel::useraccounts;
 
 use strict;
 
-use esmith::FormMagick;
+# Get shot of FormMagick and cgi
+
+#use esmith::FormMagick;
 use esmith::AccountsDB;
 use esmith::ConfigDB;
-use esmith::cgi;
+#use esmith::cgi;
 use esmith::util;
 use File::Basename;
 use Exporter;
 use Carp qw(verbose);
 
-our @ISA = qw(esmith::FormMagick Exporter);
+# This will have to go - where do we need it ?
+# our @ISA = qw(esmith::FormMagick Exporter);
 
+# Anything with print is a non starter and should be renamed
 our @EXPORT = qw(
+    get_user_accounts
     print_user_table
     print_acctName_field
     print_groupMemberships_field
@@ -111,6 +116,7 @@ our $accountdb;
 
 =cut
 
+# Errrr ? No FormMagick now.
 sub new {
     shift;
     my $self = esmith::FormMagick->new();
@@ -133,6 +139,31 @@ like($_STDOUT_, qr/bart/, "Found usernames in user table output");
 like($_STDOUT_, qr/ff0000/, "Found red 'reset password' output");
 
 =cut
+
+# The whole print_user_table routine can go - we just need get_users here
+
+sub get_user_accounts {
+    my $self = shift;
+    my $q = $self->{cgi};
+    my $account = $self->localise('ACCOUNT');
+    my $acctName = $self->localise('USER_NAME');
+
+    my $modify  = $self->localise('MODIFY');
+    my $resetpw = $self->localise('PASSWORD_RESET');
+    my $lock    = $self->localise('LOCK_ACCOUNT');
+    my $account_locked = $self->localise('ACCOUNT_LOCKED');
+    my $remove  = $self->localise('REMOVE');
+
+    my @users = $accountdb->get('admin');
+    push @users, $accountdb->users();
+
+    unless ( scalar @users )
+    {
+        return "No user accounts available";
+    }
+        return @users;
+}
+
 
 sub print_user_table {
     my $self = shift;
