@@ -63,86 +63,99 @@ post '/' => sub {
     # If it is like wbl.cgi?get_dnsbl or wbl.cgi?get_rblSettings or similar
     # we could return some JSON instead
     # Just needs some logic to figure the call style and output relevant data
-    
-    SWITCH: {
-        if ( $list =~ /^RBL List/ ) {
-            $mojo->stash( contentVar => '_rbl' );
-            $mojo->stash( listR      => $list );
-        }
-        if ( $list =~ /^Black List/ ) {
-            $mojo->stash( contentVar => '_black' );
-            $mojo->stash( listR      => $list );
-        }
-        if ( $list =~ /^White List/ ) {
-            $mojo->stash( contentVar => '_white' );
-            $mojo->stash( listR      => $list );
-        }
-
-        # Fall through back to choice list
-        # Not sure how do do an 'else' though !
-#        my @wblList = ( 'RBL List', 'Black List', 'White List' );
-#        $mojo->stash( list       => \@wblList );
-#        $mojo->stash( contentVar => '_choice' );
-    }
 
     # Hmm some of this comes back as a carriage return separated array
     # For now removed the \n and join in the wbl.pm file
     # eg joe@domain.com\nfred@domain.com
     #
-    
-    # The following should probably go in the above switch routines so they only get called as required
-    # You can then do some logic to either call a template to output the data,
-    # or alternatively answer a query with some JSON instead
 
-    # For RBL List
-    # dnsbl - returns 'enabled/disabled
-    my $dnsbl = get_dnsbl();
-    $mojo->stash( dnsbl => $dnsbl );
-    
-    # rhsbl - returns 'enabled/disabled
-    my $rhsbl = get_rhsbl();
-    $mojo->stash( rhsbl => $rhsbl );
-    
-    # uribl - returns 'enabled/disabled
-    my $uribl = get_uribl();
-    $mojo->stash( uribl => $uribl );
-    
-    # For SBLList List
-    my @sbllist = get_sbllist();
-    $mojo->stash( sbllist => \@sbllist );
+    SWITCH: {
 
-    # For RBLList List
-    my @rbllist = get_rbllist();
-    $mojo->stash( rbllist => \@rbllist );
-    
-    # For URLList List
-    my @ubllist = get_ubllist();
-    $mojo->stash( ubllist => \@ubllist );
-    
+        if ( $list =~ /^RBL List/ ) {
 
-    # For Black List
-    my @badhelo = get_badhelo();
-    $mojo->stash( badhelo => \@badhelo );
-    
-    my @badmailfrom = get_badmailfrom();
-    $mojo->stash( badmailfrom => \@badmailfrom );
+            # Set the template we require
+            # You could do some logic to either call a template to output the data,
+            # or alternatively answer a query with some JSON instead
+            $mojo->stash( contentVar => '_rbl' );
 
+            # Set the retrieved list name to display it for testing
+            $mojo->stash( listR => $list );
 
-    # For WBL List
-    my @whitelistsenders = get_whitelistsenders();
-    $mojo->stash( whitesenders => \@whitelistsenders );
+            # For RBL List
+            # dnsbl - returns 'enabled/disabled
+            my $dnsbl = get_dnsbl();
+            $mojo->stash( dnsbl => $dnsbl );
 
-    my @whitelisthelo = get_whitelisthelo();
-    $mojo->stash( whitehelo => \@whitelisthelo );
+            # rhsbl - returns 'enabled/disabled
+            my $rhsbl = get_rhsbl();
+            $mojo->stash( rhsbl => $rhsbl );
 
-    my @whitelisthosts = get_whitelisthosts();
-    $mojo->stash( whitehosts => \@whitelisthosts );
+            # uribl - returns 'enabled/disabled
+            my $uribl = get_uribl();
+            $mojo->stash( uribl => $uribl );
 
-    my @whitelistfrom = get_whitelistfrom();
-    $mojo->stash( whitefrom => \@whitelistfrom );
+            # For SBLList List
+            my @sbllist = get_sbllist();
+            $mojo->stash( sbllist => \@sbllist );
 
-    # Ignore this = was thinking choice buttons instead of a dropdown.
-    # Decide what to do depending on the button
+            # For RBLList List
+            my @rbllist = get_rbllist();
+            $mojo->stash( rbllist => \@rbllist );
+
+            # For URLList List
+            my @ubllist = get_ubllist();
+            $mojo->stash( ubllist => \@ubllist );
+
+        }
+        if ( $list =~ /^Black List/ ) {
+
+            # Set the template we require
+            # You could do some logic to either call a template to output the data,
+            # or alternatively answer a query with some JSON instead
+            $mojo->stash( contentVar => '_black' );
+
+            # Set the retrieved list name to display it for testing
+            $mojo->stash( listR => $list );
+
+            # For Black List
+            my @badhelo = get_badhelo();
+            $mojo->stash( badhelo => \@badhelo );
+
+            my @badmailfrom = get_badmailfrom();
+            $mojo->stash( badmailfrom => \@badmailfrom );
+
+        }
+        if ( $list =~ /^White List/ ) {
+
+            # Set the template we require
+            # You could do some logic to either call a template to output the data,
+            # or alternatively answer a query with some JSON instead
+            $mojo->stash( contentVar => '_white' );
+
+            # Set the retrieved list name to display it for testing
+            $mojo->stash( listR => $list );
+
+            # For WBL List
+            my @whitelistsenders = get_whitelistsenders();
+            $mojo->stash( whitesenders => \@whitelistsenders );
+
+            my @whitelisthelo = get_whitelisthelo();
+            $mojo->stash( whitehelo => \@whitelisthelo );
+
+            my @whitelisthosts = get_whitelisthosts();
+            $mojo->stash( whitehosts => \@whitelisthosts );
+
+            my @whitelistfrom = get_whitelistfrom();
+            $mojo->stash( whitefrom => \@whitelistfrom );
+
+        }
+
+        # Fall through back to choice list
+        # Not sure how do do an 'else' though !
+        #        my @wblList = ( 'RBL List', 'Black List', 'White List' );
+        #        $mojo->stash( list       => \@wblList );
+        #        $mojo->stash( contentVar => '_choice' );
+    }
 
     $mojo->render( template => 'main' );
 };
