@@ -1,0 +1,94 @@
+<div>
+      <section class="content">
+         <p>Returned Values</p>
+         First line is from returned from list: 
+         <%= $listR %>
+         <br />
+      </section><!-- /.content -->
+</div>
+<br />
+<div>
+      <section class="content">
+      Form starts here
+      <br />
+      <br />
+
+No idea how to set the radio button to the correct status.
+We could use a dropdown Enabled/Disabled instead
+<br />
+<br />
+
+<b>DNSBL</b>
+<br />
+% param dnsbl => 'disabled' unless $dnsbl eq 'enabled';
+<%= radio_button 'dnsbl' => 'enabled' %> Enabled
+<%= radio_button 'dnsbl' => 'disabled'  %> Disabled
+
+<br />
+<br />
+
+<b>RHSBL</b>
+<br />
+% param rhsbl => 'disabled' unless $dnsbl eq 'enabled';
+<%= radio_button 'rhsbl' => 'enabled' %> Enabled
+<%= radio_button 'rhsbl' => 'disabled'  %> Disabled
+
+<br />
+<br />
+
+<b>URI BL</b>
+<br />
+% param uribl => 'disabled' unless $dnsbl eq 'enabled';
+<%= radio_button 'uribl' => 'enabled' %> Enabled
+<%= radio_button 'uribl' => 'disabled'  %> Disabled
+
+<br />
+<br />
+
+<form name="list" action="" method="POST">
+
+<table>
+<tbody>
+<tr>
+<b>RBL List</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('rbllist') }) {
+%= $_
+% }
+%end
+<br />
+<tr />
+
+<tr>
+<b>SBL List</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('sbllist') }) {
+%= $_
+% }
+%end
+<br />
+
+<b>URL List</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('ubllist') }) {
+%= $_
+% }
+%end
+<br />
+
+</tr>
+</tbody>
+</table>
+
+<input type="submit" value="Submit">
+</form>
+
+<br />
+<br />
+
+      </section><!-- /.content -->
+</div>
+

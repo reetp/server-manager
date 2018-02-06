@@ -1,0 +1,19 @@
+<div>
+      <section class="content">
+      
+%#Some Form Buttons
+%#= button_to Test => 'http://home.reetspetit.net/'
+%#= button_to Remove => './wbl.cgi'
+
+<form name="choice" action="" method="POST">
+
+Test dropbown list
+<div>
+<%= select_field 'list' => [ @{ stash('list') }], id=> 'dropdown' %>
+</div>
+<br />
+
+<input type="submit" value="Submit">
+</form>
+      </section><!-- /.content -->
+</div>
