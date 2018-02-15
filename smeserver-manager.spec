@@ -802,6 +802,7 @@ rm -rf $RPM_BUILD_ROOT
 rm -f %{name}-%{version}-%{release}-filelist
 /sbin/e-smith/genfilelist $RPM_BUILD_ROOT \
 --file /etc/e-smith/web/panels/manager2/cgi-bin/wbl 'attr(4750,root,admin)' \
+--file /etc/e-smith/web/panels/manager2/cgi-bin/useraccounts 'attr(4750,root,admin)' \
 --dir /etc/e-smith/web/panels/manager2 'attr(0755,root,root)' \
 > %{name}-%{version}-%{release}-filelist
 echo "%doc COPYING" >> %{name}-%{version}-%{release}-filelist
