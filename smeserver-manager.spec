@@ -20,7 +20,8 @@ Requires: e-smith-lib >= 1.18.0-26
 Requires: e-smith-manager >= 2.4.0-22
 Requires: perl-Mojolicious >= 6.44
 Requires: pwauth
-Requires: perl(Apache::AuthTkt)
+Requires: perl(Apache::AuthTkt
+Requires: smeserver-manager-html
 Provides: server-manager2
 AutoReqProv: no
 
