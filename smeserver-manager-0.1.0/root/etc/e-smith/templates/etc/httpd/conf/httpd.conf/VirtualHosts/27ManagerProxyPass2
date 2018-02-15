@@ -1,0 +1,40 @@
+{
+    # vim: ft=perl:
+
+    $haveSSL = (exists ${modSSL}{status} and ${modSSL}{status} eq "enabled") ?  'yes' : 'no';
+    $plainTextAccess = ${'httpd-admin'}{PermitPlainTextAccess} || 'no';
+    $plainPort = ${'httpd-e-smith'}{TCPPort} || '80';
+    $sslPort = ${modSSL}{TCPPort} || '443';
+
+    $OUT = '';
+    foreach $place ('server-manager2')
+    {
+        if (($port eq $plainPort) && ($haveSSL eq 'yes') && ($plainTextAccess ne 'yes'))
+        {
+            $OUT .= '    RewriteCond %{REMOTE_ADDR} !^127\.0\.0\.1$' . "\n";
+            $OUT .= "    RewriteRule ^/$place(/.*|\$)    https://%{HTTP_HOST}/$place\$1 [L,R]\n";
+        }
+	if ($port eq $sslPort)
+	{
+            # mod_auth_tkt needs to know the protocol to write  307 redirection
+	    $OUT .= "    RequestHeader set X-Forwarded-Proto \"https\"\n";
+	}
+        $OUT .= "    ProxyPass /$place http://127.0.0.1:${'httpd-admin'}{TCPPort}/$place\n";
+        $OUT .= "    ProxyPassReverse /$place http://127.0.0.1:${'httpd-admin'}{TCPPort}/$place\n";
+
+        $OUT .= "    <Location /$place>\n";
+        $OUT .= "        order deny,allow\n";
+        $OUT .= "        deny from all\n";
+        if ($port eq $plainPort)
+        {
+            $OUT .= '        allow from 127.0.0.1' . "\n";
+        }
+        elsif (($haveSSL eq 'yes') && (($port eq $sslPort) || ($plainTextAccess ne 'yes')))
+        {
+            $OUT .= "        allow from $localAccess $externalSSLAccess\n";
+        } else {
+            $OUT .= "        allow from $localAccess\n";
+        }
+        $OUT .= "    </Location>\n";
+    }
+}

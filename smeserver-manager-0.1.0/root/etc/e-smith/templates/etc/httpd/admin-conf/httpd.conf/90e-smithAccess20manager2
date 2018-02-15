@@ -1,0 +1,48 @@
+
+#------------------------------------------------------------
+# e-smith-manager panel
+#------------------------------------------------------------
+
+<Directory "/etc/e-smith/web/panels/manager2/html" >
+    Options Includes FollowSymLinks ExecCGI
+    AllowOverride None
+    order deny,allow
+    deny from all
+    allow from { $localAccess }
+{
+	my $manager2 = ${'httpd-admin'}{'manager2'} || "login";
+	if ($manager2 ne 'nologin')
+    	    {
+    	    $OUT = "    AuthType Basic\n";
+	    $OUT .= "    TKTAuthLoginURL /server-common/cgi-bin/login\n";
+    	    my $ManagerTimeout = ${'httpd-admin'}{ManagerTimeout} || "30m";
+	    $OUT .= "    TKTAuthTimeout $ManagerTimeout\n";
+	    $OUT .= "    TKTAuthTimeoutRefresh 0.66 \n";
+	    $OUT .= "    TKTAuthUnauthURL /server-common/cgi-bin/logout\n";
+	    $OUT .= "    require user admin\n";
+	}
+}
+    Satisfy all
+</Directory>
+
+<Directory "/etc/e-smith/web/panels/manager2/cgi-bin">
+    Options Includes FollowSymLinks ExecCGI
+    AllowOverride None
+    order deny,allow
+    deny from all
+    allow from { $localAccess }
+{    
+    my $manager2 = ${'httpd-admin'}{'manager2'} || "login";
+    if ($manager2 ne 'nologin')
+	{
+	$OUT = "    AuthType Basic\n";
+	$OUT .= "    TKTAuthLoginURL /server-common/cgi-bin/login\n";
+	my $ManagerTimeout = ${'httpd-admin'}{ManagerTimeout} || "30m";
+        $OUT .= "    TKTAuthTimeout $ManagerTimeout\n";
+        $OUT .= "    TKTAuthTimeoutRefresh 0.66 \n";
+        $OUT .= "    TKTAuthUnauthURL /server-common/cgi-bin/logout\n";
+        $OUT .= "    require user admin\n";
+        }
+}
+    Satisfy all
+</Directory>

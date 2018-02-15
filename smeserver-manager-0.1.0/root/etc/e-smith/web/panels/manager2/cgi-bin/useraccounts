@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+# no -d allowed when running suid from the cgi-bin dir :-(
+#-wT
+# vim: ft=xml:
+
+#----------------------------------------------------------------------
+# heading     : Configuration
+# description : E-mail WBL
+# navigation  : 6000 6710
+#----------------------------------------------------------------------
+
+use strict;
+use warnings;
+use Mojolicious::Lite;
+use smeserver::Panel::useraccountsNew;
+
+#use esmith::wblNew;
+
+# We can use separate template in templates/somefile.html.ep
+# plugin 'HTMLTemplateProRenderer';
+
+# Load up our wbl subroutines
+# my $f = esmith::wblNew->new();
+
+# Initial setup when called
+# get '/useraccounts' => sub {
+
+get '/' => sub {
+    
+    my ($mojo) = @_;
+
+    my @useraccounts = get_user_accounts();
+
+    if ( scalar @useraccounts ) {
+
+        $mojo->stash( userlist => \@useraccounts );
+
+        # This is the template fragment to be embedded in main
+        $mojo->stash( contentVar => '_useraccounts' );
+
+    }
+
+    else {
+        $mojo->stash( contentVar => '_unavailable' );
+    }
+
+    $mojo->render( template => 'main' );
+};
+
+
+app->start;
+

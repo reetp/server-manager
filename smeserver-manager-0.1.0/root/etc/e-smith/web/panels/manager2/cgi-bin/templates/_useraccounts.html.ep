@@ -1,0 +1,39 @@
+<div>
+      <section class="content">
+         <p>Returned Values</p>
+         First line is from returned from list: 
+         <%= $listR %>
+         <br />
+      </section><!-- /.content -->
+</div>
+<br />
+
+<div>
+      <section class="content">
+      
+      Form starts here
+      <br />
+
+<table>
+<tbody>
+<tr>
+
+% for my @user (@{ stash('userlist') }) {
+      % for my $key (@$user) {
+      <td>
+      %= $key
+      </td>
+      %}
+% }
+
+</tr>
+
+
+</tbody>
+</table>
+
+<br />
+<br />
+
+      </section><!-- /.content -->
+</div>

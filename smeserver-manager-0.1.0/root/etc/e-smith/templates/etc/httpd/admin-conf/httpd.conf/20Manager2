@@ -1,0 +1,10 @@
+
+
+ScriptAlias /server-manager2/noframes    /etc/e-smith/web/panels/manager2/cgi-bin/noframes
+ScriptAlias /server-manager2/support    /etc/e-smith/web/panels/manager2/cgi-bin/support
+ScriptAlias /server-manager2/navigation    /etc/e-smith/web/panels/manager2/cgi-bin/navigation
+
+# smeserver manager 2 panel
+ScriptAlias /server-manager2/cgi-bin /etc/e-smith/web/panels/manager2/cgi-bin
+Alias       /server-manager2 /etc/e-smith/web/panels/manager2/html
+

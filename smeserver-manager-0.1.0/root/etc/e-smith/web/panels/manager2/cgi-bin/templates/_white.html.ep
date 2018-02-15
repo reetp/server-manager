@@ -1,0 +1,85 @@
+<section class="content">
+<div>
+         <p>Returned Values</p>
+         First line is from returned from list: 
+         <%= $listR %>
+         <br />
+</div>
+<br />
+<div>
+      Form starts here
+<br />
+
+<form name="list" action="" method="POST">
+<table>
+<tbody>
+<tr>
+
+<b>Whitelist  hosts</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('whitehosts') }) {
+%= $_
+% }
+%end
+<br />
+<br />
+
+<b>Whitelist  helo</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('whitehelo') }) {
+%= $_
+% }
+%end
+<br />
+<br />
+
+<b>Whitelist senders</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('whitesenders') }) {
+%= $_
+% }
+%end
+<br />
+<br />
+
+<b>Spamassasin from</b>
+<br />
+%= text_area story => (cols => 40) => begin
+% for (@{ stash('whitefrom') }) {
+%= $_
+% }
+%end
+<br />
+<br />
+
+<input type="submit" value="Submit">
+</form>
+
+</tr>
+</tbody>
+</table>
+
+<br />
+<br />
+Sample text areas
+<br />
+
+%= text_area 'story'
+<br />
+%= text_area 'story', cols => 40
+<br />
+%= text_area story => 'Default\nDove', cols => 40
+<br />
+%= text_area story => (cols => 40) => begin
+  Default
+  Swan
+% end
+<br />
+<br />
+
+</div>
+
+</section><!-- /.content -->

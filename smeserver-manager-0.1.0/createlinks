@@ -1,0 +1,10 @@
+#!/usr/bin/perl -w
+
+use esmith::Build::CreateLinks  qw(:all);
+
+#--------------------------------------------------
+# functions for manager panel
+#--------------------------------------------------
+my $panel = "manager2";
+
+# panel_link("wbl", $panel);
